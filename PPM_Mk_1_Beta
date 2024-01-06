@@ -1,0 +1,231 @@
+import copy
+def PPM(input_code,branch_direction=True):
+    # Define amino acid atom information using the residue letters as the key and the atoms names and coordinates as values
+    # this kind of works not really
+    # sends ^ and _ to the right location (origin - shift) but does not send the sidechain to the proper spot
+    amino_acid_data = {
+        'A':[('N', (0.000,0.000,0.000)),
+            ('CA', (1.432, -0.332, 0.000)),
+            ('CB', (1.432, -1.872, 0.000)),
+            ('O', (2.377, 1.27, 0.000)),
+            ('C', (2.377, 0.000, 0.000))],
+        'K':[('N',(0.000,0.000,0.000)),
+               ('CA',(1.432, -0.332, 0.000)),
+               ('CB',(1.432, -1.872, 0.000)), # side chain coords. = 1.54 C-C bond length and 109.5 angle
+               ('CG',(2.321, -3.129, 0.000)),
+               ('CD',(1.432, -4.387, 0.000)),
+               ('CE',(2.321, -5.645, 0.000)),
+               ('NZ',(1.432, -6.903, 0.000)),
+               ('O', (2.377, 1.27, 0.000)),
+               ('C', (2.377, 0.000, 0.000))],
+        'G':[('N', (0.000,0.000,0.000)),
+            ('CA', (1.432, -0.332, 0.000)),
+            ('O', (2.377, 1.27, 0.000)),
+            ('C', (2.377, 0.000, 0.000))],
+        '*': [('OXT',(1.165,-0.665,0.000)),] # this is the C-terminus OH group
+# Need to add more amino acids as needed, also need to specify coordinates i.e. start at zero,
+        # bond length data fro https://arxiv.org/pdf/0804.2488.pdf
+    }
+  # need to add C and N termini
+  # labeled starting at zero, so the atom index+ conect # will equal the correct
+    conect_record = {'A': [ # atoms indecies that the current atom index is connected to these data include replicates i.e. #1 conect 2,3 and #2 conect 1,4
+              ('N', (1,2)),
+              ('CA', (2,1,5,3)),
+              ('C', (5,2,4,6)), # hmm need to specify double bond, is also connected to previous residue 'N'
+              ('O', (4,5)),
+              ('CB', (3,2)),],
+          'K':[('N',(1,2)),
+               ('CA',(2,1,5,3)),
+               ('CB',(3,2,4)),
+               ('CG',(4,3,5)),
+               ('CD',(5,4,6)),
+               ('CE',(6,5,7)),
+               ('NZ',(7,6)),
+               ('O',(8,9)),
+               ('C',(9,8,10))],
+          '*':[('OXT',(1,0))],
+          'G':[('N', (1,2)),
+               ('CA', (2,1,4)),
+               ('O', (3,4)),
+               ('C', (4,2,3))],
+
+  # Need to add more amino acids as needed, also need to specify coordinates i.e. start at zero,
+      }
+    residue_name_record = {'A':'ALA A','K':'LYS K','G':'GLY G'} # this dictionary has the 3-letter code for each single letter amino acid
+################################################################################################################################################
+
+    # Create a PDB file
+    output_filename = 'linear_amino_acids.pdb'
+    with open(output_filename, 'w') as pdb_file:
+
+        horizontal_shift = 0.0  # Initialize horizontal shift
+        vertical_shift = 0.0
+        index_value = int() # initialize individual atom index value (1,2,3,4,5...ect.)
+        residue_index = 1 # index value for each whole amino acid: e.g. atoms 1,2,3,4 belongs to aminoacid #1 etc.
+        conect_output = [] # this will store all of the conect records t be printed
+        conect_count = int() # this will be added to the next residue so the conect_record atoms are numbered properly
+        atom_count = int() # this counts the atoms to add to the conect_count
+        #total_residue_angle_list = [] # this will store all of the angle data from each residue
+        skip_index = -1
+        skip_flag = False
+        chain_repeat = 0 # this keeps track of how many branches we have
+
+        for amino_acid in input_code:
+          skip_index += 1
+
+          if amino_acid == '^':
+            skip_flag = True
+            #need to skip the residues that are added in the branched chain
+            #chain_repeat += 1
+            side_chain_start_index = input_code.index(amino_acid,skip_index) # gets the position of the ^, starting at the current position
+
+            side_chain_shift = int() # incriment for moving the branched side chain
+
+            side_chain_skip_start = side_chain_start_index # skip all of the atoms between ^ and * for the master loop
+
+            side_chain_skip_end = input_code.index('*',side_chain_start_index) # ends at the next * this way multiple branches can be made
+
+            side_chain = input_code[side_chain_start_index+1:input_code.find('*',side_chain_start_index)+1] # create new str of just the sidechain
+            print('side chain:',side_chain)
+            # here I refer to the branched amino acid sequence as a side chain. I am sorry for doing this
+            previous_residue_coord = input_code[side_chain_start_index-1] # find the previous residue to locate its sidechain
+
+            previous_residue_coord_data = amino_acid_data.get(previous_residue_coord) # obtain previous residue coord data
+            previous_residue_last_side_chain = previous_residue_coord_data[-3][1] # this is the final sidechain atom
+
+            #sc = side_chain = branched sequence
+            sc_starting_x = previous_residue_last_side_chain[0]#-3.747 # starting x
+            #print(sc_starting_x)
+            sc_starting_y = previous_residue_last_side_chain[1]-1.37 # starting y - amide bond length
+            #print(sc_starting_y)
+            #################### reverse direction success ########################################
+            if branch_direction:
+              side_chain = side_chain[::-1] # reverse the sequence order, with C-term starting first
+              print('reverse side chain:',side_chain)
+              for residue in side_chain:
+
+                amino_acid_data_entry = amino_acid_data.get(residue)
+
+                side_chain_entry = conect_record.get(residue)
+
+                side_chain_name = residue_name_record.get(residue)
+                #amino_data_copy = cpy
+                if amino_acid_data_entry[0][0] != 'OXT':
+                  cpy = copy.copy(amino_acid_data_entry) # copy the coord data
+                  cpy[0],cpy[-1],cpy[-2] = ('N', (cpy[-1][1][0],cpy[0][1][2],cpy[0][1][2])),('C', (cpy[0][1][0],cpy[-1][1][1],cpy[-1][1][2])),('O',(cpy[0][1][0],cpy[-2][1][1],cpy[-2][1][2]))
+                  # we flipped the x-coords. now we start with the C-term first. fyi: there mightve been a better way to do this.
+
+                  for atom_index, (atom_name, atom_coods) in enumerate(cpy, start=1):
+                    print('Wrote branched',atom_name,'to file')
+                    pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {side_chain_name}{residue_index:>4d}    '
+                                f'{atom_coods[1]+horizontal_shift-sc_starting_x:8.3f}{-1*atom_coods[0]-side_chain_shift+sc_starting_y:8.3f}{atom_coods[2]:8.3f}'
+                                f'  1.00 62.66           {atom_name[0]}\n')
+                else:
+                  for atom_index, (atom_name, atom_coods) in enumerate(amino_acid_data_entry, start=1):
+                    print('Wrote branched',atom_name,'to file')
+                    pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {previous_residue_name}{residue_index:>4d}    '
+                                    f'{atom_coods[1]+horizontal_shift-sc_starting_x:8.3f}{-1*atom_coods[0]-side_chain_shift+sc_starting_y+3.747-2*1.165:8.3f}{atom_coods[2]:8.3f}'
+                                    f'  1.00 62.66           {atom_name[0]}\n')
+                    side_chain_shift -= 2.587 # residue length - amide bond
+                atom_count += 1
+                for atom_index_conect, (atom_name_conect, atom_conect) in enumerate(conect_data, start=1): #iterate through the dictionary, create pairs
+                  # append conect records to a master list, it does not matter the order, as long as they are correct
+                  conect_output.append([i + conect_count for i in atom_conect])
+
+                side_chain_shift += 3.747
+                index_value += atom_index
+                residue_index += 1
+                conect_count = atom_count
+                previous_residue_name = side_chain_name
+
+            ####################################################################################################
+            ##################################END REVERSE SIDE CHAIN############################################
+            ####################################################################################################
+            else:
+              for residue in side_chain:
+
+                amino_acid_data_entry = amino_acid_data.get(residue)
+
+                side_chain_entry = conect_record.get(residue)
+
+                side_chain_name = residue_name_record.get(residue)
+
+                for atom_index, (atom_name, atom_coods) in enumerate(amino_acid_data_entry, start=1): # hahah atom coods
+                  #new_coords = atom_coods
+                  if atom_name != 'OXT':
+                    pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {side_chain_name}{residue_index:>4d}    '
+                                f'{atom_coods[1]+horizontal_shift-sc_starting_x:8.3f}{-1*atom_coods[0]-side_chain_shift+sc_starting_y:8.3f}{atom_coods[2]:8.3f}'
+                                f'  1.00 62.66           {atom_name[0]}\n')
+
+                  else:
+                    pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {previous_residue_name}{residue_index:>4d}    '
+                                f'{atom_coods[1]+horizontal_shift-sc_starting_x:8.3f}{-1*atom_coods[0]-side_chain_shift+sc_starting_y+3.747-2*1.165:8.3f}{atom_coods[2]:8.3f}'
+                                f'  1.00 62.66           {atom_name[0]}\n')
+
+                atom_count += 1
+                for atom_index_conect, (atom_name_conect, atom_conect) in enumerate(conect_data, start=1): #iterate through the dictionary, create pairs
+                # append conect records to a master list, it does not matter the order, as long as they are correct
+                  conect_output.append([i + conect_count for i in atom_conect])
+
+                side_chain_shift += 3.747
+                index_value += atom_index
+                residue_index += 1
+                conect_count = atom_count
+                previous_residue_name = side_chain_name
+
+
+          ############################################################
+          ############################################################
+          #continue on to the rest of the input main chain############
+          ############################################################
+          ############################################################
+          if skip_flag is True:
+            if side_chain_skip_start <= skip_index <= side_chain_skip_end:
+              #print('Skip loop:',skip_index)
+              continue
+
+          skip_flag = False # reset the skip flag so we can redo another branch
+
+          amino_acid_data_entry = amino_acid_data.get(amino_acid) # .get each dictionary data from letter code input
+          conect_data = conect_record.get(amino_acid)
+          residue_name = residue_name_record.get(amino_acid)
+
+          if amino_acid_data_entry is None:
+            print(f"Amino acid code '{amino_acid}' not found. Skipped.")
+            continue
+            #print('for_check1')
+            # Write atom information to the PDB file with a horizontal shift
+          for atom_index, (atom_name, atom_coords) in enumerate(amino_acid_data_entry, start=1): #iterate through the dictionary, create pairs
+            if atom_name != 'OXT':
+              pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {residue_name}{residue_index:>4d}    '
+                              f'{atom_coords[0]+ horizontal_shift:8.3f}{atom_coords[1]:8.3f}{atom_coords[2]:8.3f}'
+                              f'  1.00 62.66           {atom_name[0]}\n')
+            else:
+              pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {previous_residue_name}{residue_index-1:>4d}    '
+                              f'{atom_coords[0]+ (horizontal_shift-3.747+2*1.165):8.3f}{atom_coords[1]:8.3f}{atom_coords[2]:8.3f}'
+                              f'  1.00 62.66           {atom_name[0]}\n')
+              # conect time
+
+            atom_count += 1
+          for atom_index_conect, (atom_name_conect, atom_conect) in enumerate(conect_data, start=1): #iterate through the dictionary, create pairs
+              # append conect records to a master list, it does not matter the order, as long as they are correct
+            conect_output.append([i + conect_count for i in atom_conect])
+
+
+          horizontal_shift += 3.747  # Move by given Angstrom 'horizontally' one residue length+amide bond distance
+          #vertical_shift += 0.5
+          index_value += atom_index
+          residue_index += 1
+          conect_count = atom_count
+          previous_residue_name = residue_name
+            #print('for_check2')
+        # write all of the conect records to the remainder of the output file
+        for record in conect_output:
+          pdb_file.write('CONECT     '+'   '.join(map(str,record))+'\n') # need to print each value in the subset list
+        ############################################################
+        #end the master loop
+        ############################################################
+    print(f'PDB file generated: {output_filename}')
+    print(input_code)
+    #print(atom_coords)
+    #print(atom_name)
