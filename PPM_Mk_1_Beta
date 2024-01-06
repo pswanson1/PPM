@@ -1,8 +1,10 @@
 import copy
 def PPM(input_code,branch_direction=True):
     # Define amino acid atom information using the residue letters as the key and the atoms names and coordinates as values
-    # this kind of works not really
-    # sends ^ and _ to the right location (origin - shift) but does not send the sidechain to the proper spot
+    # Input code is a generic FASTA sequence consisting of single letter amino acid codes, end the sequence with a * signifying the C-terminus
+    # the function takes the input and determines the atomic coordinates and atom connections via separate dictionaries
+    # ^ specifies where to start a separate branched sequence * specifies where to end the branch
+    # So, K^AAG\*KK\* sequence consists of three lysienes, with the first lysine having the sequence GAA attached to its sidechain via a isopeptide bond.
     amino_acid_data = {
         'A':[('N', (0.000,0.000,0.000)),
             ('CA', (1.432, -0.332, 0.000)),
