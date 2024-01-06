@@ -1,18 +1,18 @@
 import copy
-def PPM(input_code,branch_direction=True):
-    # Define amino acid atom information using the residue letters as the key and the atoms names and coordinates as values
+def PPM(input_code,branch_direction=True,input_name='ppm_outputfile'):
+   # Define amino acid atom information using the residue letters as the key and the atoms names and coordinates as values
     # Input code is a generic FASTA sequence consisting of single letter amino acid codes, end the sequence with a * signifying the C-terminus
     # the function takes the input and determines the atomic coordinates and atom connections via separate dictionaries
     # ^ specifies where to start a separate branched sequence * specifies where to end the branch
     # So, K^AAG*KK* sequence consists of three lysienes, with the first lysine having the sequence GAA attached to its sidechain via a isopeptide bond.
     amino_acid_data = {
         'A':[('N', (0.000,0.000,0.000)),
-            ('CA', (1.432, -0.332, 0.000)),
+            ('CA', (1.432, -0.444, 0.000)),
             ('CB', (1.432, -1.872, 0.000)),
             ('O', (2.377, 1.27, 0.000)),
             ('C', (2.377, 0.000, 0.000))],
         'K':[('N',(0.000,0.000,0.000)),
-               ('CA',(1.432, -0.332, 0.000)),
+               ('CA',(1.432, -0.444, 0.000)),
                ('CB',(1.432, -1.872, 0.000)), # side chain coords. = 1.54 C-C bond length and 109.5 angle
                ('CG',(2.321, -3.129, 0.000)),
                ('CD',(1.432, -4.387, 0.000)),
@@ -21,7 +21,7 @@ def PPM(input_code,branch_direction=True):
                ('O', (2.377, 1.27, 0.000)),
                ('C', (2.377, 0.000, 0.000))],
         'G':[('N', (0.000,0.000,0.000)),
-            ('CA', (1.432, -0.332, 0.000)),
+            ('CA', (1.432, -0.444, 0.000)),
             ('O', (2.377, 1.27, 0.000)),
             ('C', (2.377, 0.000, 0.000))],
         '*': [('OXT',(1.165,-0.665,0.000)),] # this is the C-terminus OH group
@@ -57,7 +57,7 @@ def PPM(input_code,branch_direction=True):
 ################################################################################################################################################
 
     # Create a PDB file
-    output_filename = 'linear_amino_acids.pdb'
+    output_filename = str(input_name+'.pdb')#'linear_amino_acids.pdb'
     with open(output_filename, 'w') as pdb_file:
 
         horizontal_shift = 0.0  # Initialize horizontal shift
@@ -88,7 +88,7 @@ def PPM(input_code,branch_direction=True):
             side_chain_skip_end = input_code.index('*',side_chain_start_index) # ends at the next * this way multiple branches can be made
 
             side_chain = input_code[side_chain_start_index+1:input_code.find('*',side_chain_start_index)+1] # create new str of just the sidechain
-            print('side chain:',side_chain)
+            #print('side chain:',side_chain)
             # here I refer to the branched amino acid sequence as a side chain. I am sorry for doing this
             previous_residue_coord = input_code[side_chain_start_index-1] # find the previous residue to locate its sidechain
 
@@ -103,7 +103,7 @@ def PPM(input_code,branch_direction=True):
             #################### reverse direction success ########################################
             if branch_direction:
               side_chain = side_chain[::-1] # reverse the sequence order, with C-term starting first
-              print('reverse side chain:',side_chain)
+              #print('Branched side chain:',side_chain)
               for residue in side_chain:
 
                 amino_acid_data_entry = amino_acid_data.get(residue)
@@ -118,13 +118,13 @@ def PPM(input_code,branch_direction=True):
                   # we flipped the x-coords. now we start with the C-term first. fyi: there mightve been a better way to do this.
 
                   for atom_index, (atom_name, atom_coods) in enumerate(cpy, start=1):
-                    print('Wrote branched',atom_name,'to file')
+                    #print('Wrote branched',atom_name,'to file')
                     pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {side_chain_name}{residue_index:>4d}    '
                                 f'{atom_coods[1]+horizontal_shift-sc_starting_x:8.3f}{-1*atom_coods[0]-side_chain_shift+sc_starting_y:8.3f}{atom_coods[2]:8.3f}'
                                 f'  1.00 62.66           {atom_name[0]}\n')
                 else:
                   for atom_index, (atom_name, atom_coods) in enumerate(amino_acid_data_entry, start=1):
-                    print('Wrote branched',atom_name,'to file')
+                    #print('Wrote branched',atom_name,'to file')
                     pdb_file.write(f'ATOM  {atom_index+index_value:5d}  {atom_name:<3} {previous_residue_name}{residue_index:>4d}    '
                                     f'{atom_coods[1]+horizontal_shift-sc_starting_x:8.3f}{-1*atom_coods[0]-side_chain_shift+sc_starting_y+3.747-2*1.165:8.3f}{atom_coods[2]:8.3f}'
                                     f'  1.00 62.66           {atom_name[0]}\n')
