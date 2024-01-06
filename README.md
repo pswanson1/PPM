@@ -1,5 +1,6 @@
 # PPM
 **P**ersonal **P**DB **M**aker
+*A.D. 2023*
 
 PPM.Mk.I.Beta
 
@@ -27,5 +28,7 @@ If reverse is set to false, then the branched sequence will connect to the respe
 * some bond lengths are not ideal so your vizualizer (VMD, pyMol, etc.) might add some random bonds here and there
 * Isopeptide bond between Lys and branched C-term. is too short
 * messy code pls dont hate me
+
+This code was written by me (peter swanson) and me alone. I have no professional affiliations to any company/institution 
 
 # I WILL CONTINUE TO UPDATE THIS STUFF SO PLS BE NICE TO ME
