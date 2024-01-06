@@ -4,6 +4,15 @@
 ### PPM.Mk.I.Beta
 >[!WARNING]
 >*β<sub>σ</sub> version contains residues A, G and K only*
+>[!CAUTION]
+>**Issues**
+>* Output is a linear string, hence, some bond angles are not correct
+>* Does not contain hydrogen records (use pyMol or WebMo to add hydrogens)
+>* Atom Index jumps by +1 after branched chain
+>* CONECT record stops short of last few residues after attaching branched sequence
+>* some bond lengths are not ideal so your vizualizer (VMD, pyMol, etc.) might add some random bonds here and there
+>* Isopeptide bond between Lys and branched C-term. is too short
+>* messy code pls dont hate me
 
 Code for a Python function to generate a Protein Data Base (PDB) file with the added option of Ubiquitylation and side chain modification.
 
@@ -20,15 +29,6 @@ Since Ubiquitylation is common, the sequence of the branched chain will start in
 
 If reverse is set to false, then the branched sequence will connect to the respective residue via its N-terminus. 
 
->[!CAUTION]
->**Issues**
->* Output is a linear string, hence, some bond angles are not correct
->* Does not contain hydrogen records (use pyMol or WebMo to add hydrogens)
->* Atom Index jumps by +1 after branched chain
->* CONECT record stops short of last few residues after attaching branched sequence
->* some bond lengths are not ideal so your vizualizer (VMD, pyMol, etc.) might add some random bonds here and there
->* Isopeptide bond between Lys and branched C-term. is too short
->* messy code pls dont hate me
 
 # I WILL CONTINUE TO UPDATE THIS STUFF SO PLS BE NICE TO ME
 
