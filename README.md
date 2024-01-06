@@ -4,7 +4,7 @@
 
 PPM.Mk.I.Beta
 
-*β<sub>σ<\sub> version contains residues A, G and K only*
+*β<sub>σ</sub> version contains residues A, G and K only*
 
 Code for a Python function to generate a Protein Data Base (PDB) file with the added option of Ubiquitylation and side chain modification.
 
