@@ -4,6 +4,7 @@
 ### PPM.Mk.I.Beta
 >[!WARNING]
 >*β<sub>σ</sub> version contains residues A, G and K only*
+
 >[!CAUTION]
 >**Issues**
 >* Output is a linear string, hence, some bond angles are not correct
