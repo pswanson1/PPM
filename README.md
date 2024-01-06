@@ -1,8 +1,8 @@
 # PPM
-##**P**ersonal **P**DB **M**aker
+## **P**ersonal **P**DB **M**aker
 *A.D. 2023*
 
-###PPM.Mk.I.Beta
+### PPM.Mk.I.Beta
 
 *β<sub>σ</sub> version contains residues A, G and K only*
 
@@ -14,7 +14,7 @@ The residues are generated from N->C termini, along with the proper PDB CONECT r
 
 The user merely enters their desired sequence and ends with a \* to signify the C-terminus. Following the above example, the input AAA* generates three alanines with connection records and a proper C-terminus. 
 
-#**Branched version**
+### **Branched version**
 This version allows the user to modify a respecitve amino acid. The '^' symbol specifies when the branched sequence should start, and the '*' specifies when to end the branched sequence.
 
 Since Ubiquitylation is common, the sequence of the branched chain will start in reverse: So, K^AAG\*KK\* sequence consists of three lysienes, with the first lysine having the sequence GAA attached to its sidechain via a isopeptide bond. 
