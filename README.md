@@ -21,7 +21,6 @@ Since Ubiquitylation is common, the sequence of the branched chain will start in
 
 If reverse is set to false, then the branched sequence will connect to the respective residue via its N-terminus. 
 
-**ICXC**
 
 #**Issues**
 * Does not contain hydrogen records (use pyMol or WebMo to add hydrogens)
@@ -31,6 +30,10 @@ If reverse is set to false, then the branched sequence will connect to the respe
 * Isopeptide bond between Lys and branched C-term. is too short
 * messy code pls dont hate me
 
-This code was written by me (peter swanson) and me alone. I have no professional affiliations to any company/institution 
-
 # I WILL CONTINUE TO UPDATE THIS STUFF SO PLS BE NICE TO ME
+
+
+This code was written by me (peter swanson) and me alone. It took, like a few days and stuff. 
+I have no professional affiliations to any company/institution.
+**ICXC NIKA**
+
