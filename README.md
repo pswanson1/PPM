@@ -21,8 +21,8 @@ Since Ubiquitylation is common, the sequence of the branched chain will start in
 
 If reverse is set to false, then the branched sequence will connect to the respective residue via its N-terminus. 
 
-
-#**Issues**
+>[!CAUTION]
+>**Issues**
 * Does not contain hydrogen records (use pyMol or WebMo to add hydrogens)
 * Atom Index jumps by +1 after branched chain
 * CONECT record stops short of last few residues
