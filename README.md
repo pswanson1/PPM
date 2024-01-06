@@ -33,7 +33,10 @@ If reverse is set to false, then the branched sequence will connect to the respe
 # I WILL CONTINUE TO UPDATE THIS STUFF SO PLS BE NICE TO ME
 
 
-This code was written by me (peter swanson) and me alone. It took, like a few days and stuff. 
-I have no professional affiliations to any company/institution.
-**ICXC NIKA**
+This code was written by me (peter swanson) and me alone. I did not copy from another source or use any stupid "A.I." program.
+It took me, like a few days and stuff. 
+
+I have no affiliations to any company/institution. But I am affiliated with my grandma, who is very lovely.
+
+**Glory to God. ICXC NIKA**
 
