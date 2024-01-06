@@ -1,8 +1,8 @@
 # PPM
-**P**ersonal **P**DB **M**aker
+##**P**ersonal **P**DB **M**aker
 *A.D. 2023*
 
-PPM.Mk.I.Beta
+###PPM.Mk.I.Beta
 
 *β<sub>σ</sub> version contains residues A, G and K only*
 
