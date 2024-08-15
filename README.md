@@ -8,10 +8,10 @@
 >[!CAUTION]
 >**Issues**
 >* Output is a linear string, hence, some bond angles are not correct
->* Does not contain hydrogen records (use pyMol or WebMo to add hydrogens)
+>* Does not contain hydrogen records (use pyMol or WebMo or openMM to add hydrogens)
 >* Atom Index jumps by +1 after branched chain
 >* CONECT record stops short of last few residues after attaching branched sequence
->* some bond lengths are not ideal so your vizualizer (VMD, pyMol, etc.) might add some random bonds here and there
+>* some bond lengths are not ideal so your vizualizer (VMD, pyMol etc.) might add some random bonds here and there
 >* Isopeptide bond between Lys and branched C-term. is too short
 >* messy code pls dont hate me
 
